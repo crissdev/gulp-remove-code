@@ -19,11 +19,11 @@ npm install --save-dev gulp-remove-code
 var removeCode = require('gulp-remove-code');
 
 gulp.src('./src/*.js')
-  .pipe(removeCode())
+  .pipe(removeCode({ noDevFeatures: true }))
   .pipe(gulp.dest('./dist/'))
 
-gulp.src('./src/*.jade')
-  .pipe(removeCode({ noDevFeatures: true }))
+gulp.src('./src/*.js')
+  .pipe(removeCode({ noDevFeatures: true, commentStart: '/*', commentEnd: '*/ }))
   .pipe(gulp.dest('./dist/'))
 
 gulp.src('./src/*.coffee')
