@@ -1,0 +1,45 @@
+{
+  "name": "gulp-remove-code",
+  "version": "1.0.0",
+  "description": "Remove sections of code from files based on conditions",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --reporter spec"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crissdev/gulp-remove-code.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "gulp-plugin",
+    "gulp",
+    "remove",
+    "remove code",
+    "code",
+    "strip",
+    "strip code",
+    "stream"
+  ],
+  "author": "crissdev <criss.trifan@gmail.com> (http://crissdev.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/crissdev/gulp-remove-code/issues"
+  },
+  "homepage": "https://github.com/crissdev/gulp-remove-code",
+  "dependencies": {
+    "bufferstreams": "0.0.2",
+    "event-stream": "^3.1.7",
+    "gulp-util": "^3.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "should": "^4.0.4"
+  }
+}
