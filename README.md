@@ -23,7 +23,7 @@ gulp.src('./src/*.js')
   .pipe(gulp.dest('./dist/'))
 
 gulp.src('./src/*.js')
-  .pipe(removeCode({ noDevFeatures: true, commentStart: '/*', commentEnd: '*/ }))
+  .pipe(removeCode({ noDevFeatures: true, commentStart: '/*', commentEnd: '*/' }))
   .pipe(gulp.dest('./dist/'))
 
 gulp.src('./src/*.coffee')
