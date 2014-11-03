@@ -18,7 +18,8 @@ describe('gulp-remove-code', function() {
         nullFile,
         htmlFile,
         jadeFile,
-        jsFile;
+        jsFile,
+        srcFile;
 
     function readFixtureAsText(name) {
         return fs.readFileSync('test/fixtures/' + name).toString('utf8');
@@ -49,6 +50,10 @@ describe('gulp-remove-code', function() {
             jsFile = new File({
                 path: 'test/fixtures/file-before.js',
                 contents: fs.readFileSync('test/fixtures/file-before.js')
+            });
+            srcFile = new File({
+                path: 'text/fixtures/file-before.src',
+                contents: fs.readFileSync('test/fixtures/file-before.src')
             });
         });
 
@@ -176,6 +181,30 @@ describe('gulp-remove-code', function() {
             stream.end();
         });
 
+        it('should remove code from custom file when condition is true', function(done) {
+            var stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'});
+
+            stream.once('data', function(file) {
+                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.src'));
+                done();
+            });
+
+            stream.write(srcFile);
+            stream.end();
+        });
+
+        it('should not remove code from custom file when condition is false', function(done) {
+            var stream = removeCode({development: false, commentStart: '/#', commentEnd: '#/'}),
+                originalContents = srcFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                file.contents.toString('utf8').should.equal(originalContents);
+                done();
+            });
+
+            stream.write(srcFile);
+            stream.end();
+        });
     });
 
     describe('in stream mode', function() {
@@ -203,6 +232,10 @@ describe('gulp-remove-code', function() {
             jsFile = new File({
                 path: 'test/fixtures/file-before.js',
                 contents: fs.createReadStream('test/fixtures/file-before.js')
+            });
+            srcFile = new File({
+                path: 'test/fixtures/file-before.src',
+                contents: fs.createReadStream('test/fixtures/file-before.src')
             });
         });
 
@@ -333,6 +366,35 @@ describe('gulp-remove-code', function() {
             });
 
             stream.write(jsFile);
+            stream.end();
+        });
+
+        it('should remove code from custom file when condition is true', function(done) {
+            var stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    data.toString('utf8').should.equal(readFixtureAsText('file-after.src'));
+                    done();
+                }));
+            });
+
+            stream.write(srcFile);
+            stream.end();
+        });
+
+        it('should not remove code from custom file when condition is false', function(done) {
+            var stream = removeCode({development: false, commentStart: '/#', commentEnd: '#/'}),
+                originalContents = readFixtureAsText('file-before.src');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    data.toString('utf8').should.equal(originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(srcFile);
             stream.end();
         });
     });

@@ -15,11 +15,16 @@ module.exports = function(options) {
 
     Object.keys(options).forEach(function(key) {
         if (key === 'commentStart') {
-            commentStart = key.commentStart;
+            commentStart = options.commentStart;
         }
         else if (key === 'commentEnd') {
             if (commentStart) {
+                // set it only if commentStart is provided
                 commentEnd = options.commentEnd;
+            }
+            else {
+                gutil.log(gutil.colors.yellow('gulp-remove-code: commentStart was not set but commentEnd provided. ' +
+                    'The option will be ignored. commentEnd: ' + commentEnd));
             }
         }
         else if (options[key]) {
