@@ -1,6 +1,6 @@
 {
   "name": "gulp-remove-code",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Remove sections of code from files based on conditions",
   "main": "index.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "gulp-util": "^3.0.1"
   },
   "devDependencies": {
-    "mocha": "^1.21.4",
-    "should": "^4.0.4"
+    "mocha": "^2.0.1",
+    "should": "^4.1.0"
   }
 }
