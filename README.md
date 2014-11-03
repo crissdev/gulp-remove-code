@@ -49,7 +49,7 @@ gulp.src('./src/*.coffee')
 var removeCode = require('gulp-remove-code');
 
 gulp.src('./src/file.html')
-  .pipe(removeCode({ production: true })
+  .pipe(removeCode({ production: true }))
   .pipe(gulp.dest('./dist'))
 ```
 
@@ -70,7 +70,7 @@ value = JSON.stringify({key: 'value'}, null, 2);
 var removeCode = require('gulp-remove-code');
 
 gulp.src('./src/file.js')
-  .pipe(removeCode({ production: true })
+  .pipe(removeCode({ production: true }))
   .pipe(gulp.dest('./dist'))
 ```
 
