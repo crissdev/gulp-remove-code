@@ -34,12 +34,12 @@
   },
   "homepage": "https://github.com/crissdev/gulp-remove-code",
   "dependencies": {
-    "bufferstreams": "0.0.2",
-    "event-stream": "^3.1.7",
-    "gulp-util": "^3.0.1"
+    "bufferstreams": "1.0.1",
+    "event-stream": "^3.3.0",
+    "gulp-util": "^3.0.4"
   },
   "devDependencies": {
-    "mocha": "^2.0.1",
-    "should": "^4.1.0"
+    "mocha": "^2.2.1",
+    "should": "^5.2.0"
   }
 }
