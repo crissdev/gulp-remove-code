@@ -17,6 +17,7 @@ describe('gulp-remove-code', function() {
         coffeeFile,
         nullFile,
         htmlFile,
+        cshtmlFile,
         jadeFile,
         jsFile,
         srcFile;
@@ -35,6 +36,10 @@ describe('gulp-remove-code', function() {
             htmlFile = new File({
                 path: 'test/fixtures/file-before.html',
                 contents: fs.readFileSync('test/fixtures/file-before.html')
+            });
+            cshtmlFile = new File({
+                path: 'test/fixtures/file-before.cshtml',
+                contents: fs.readFileSync('test/fixtures/file-before.cshtml')
             });
             nullFile = new File({
                 contents: null
@@ -103,6 +108,31 @@ describe('gulp-remove-code', function() {
             });
 
             stream.write(htmlFile);
+            stream.end();
+        });
+
+        it('should remove code from cshtml file when condition is true', function(done) {
+            var stream = removeCode({'no-message': true});
+
+            stream.once('data', function(file) {
+                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.cshtml'));
+                done();
+            });
+
+            stream.write(cshtmlFile);
+            stream.end();
+        });
+
+        it('should not remove code from cshtml file when condition is false', function(done) {
+            var stream = removeCode({'no-message': false}),
+                originalContents = cshtmlFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                file.contents.toString('utf8').should.equal(originalContents);
+                done();
+            });
+
+            stream.write(cshtmlFile);
             stream.end();
         });
 
@@ -217,6 +247,10 @@ describe('gulp-remove-code', function() {
                 path: 'test/fixtures/file-before.html',
                 contents: fs.createReadStream('test/fixtures/file-before.html')
             });
+            cshtmlFile = new File({
+                path: 'test/fixtures/file-before.cshtml',
+                contents: fs.createReadStream('test/fixtures/file-before.cshtml')
+            });
             nullFile = new File({
                 path: 'test/fixtures/file-before.html',
                 contents: null
@@ -279,6 +313,35 @@ describe('gulp-remove-code', function() {
             });
 
             stream.write(htmlFile);
+            stream.end();
+        });
+
+        it('should remove code from cshtml file when condition is true', function(done) {
+            var stream = removeCode({'no-message': true});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    data.toString('utf8').should.equal(readFixtureAsText('file-after.cshtml'));
+                    done();
+                }));
+            });
+
+            stream.write(cshtmlFile);
+            stream.end();
+        });
+
+        it('should not remove code from cshtml file when condition is false', function(done) {
+            var stream = removeCode({'no-message': false}),
+                originalContents = readFixtureAsText('file-before.cshtml');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    data.toString('utf8').should.equal(originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(cshtmlFile);
             stream.end();
         });
 

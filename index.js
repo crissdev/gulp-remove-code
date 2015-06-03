@@ -79,6 +79,10 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
                 commentStart = '<!--';
                 commentEnd = '-->';
                 break;
+            case 'cshtml':
+                commentStart = '@*';
+                commentEnd = '*@';
+                break;
             case 'jade':
                 commentStart = '//-';
                 commentEnd = '';
