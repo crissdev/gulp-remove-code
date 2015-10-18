@@ -4,7 +4,7 @@
   "description": "Remove sections of code from files based on conditions",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter spec"
+    "test": "mocha"
   },
   "files": [
     "index.js"
