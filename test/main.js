@@ -1,14 +1,12 @@
 'use strict';
 /*global describe:false,beforeEach:false,it:false*/
 
-var removeCode = require('../'),
-    gutil = require('gulp-util'),
-    File = gutil.File,
-    fs = require('fs'),
-    es = require('event-stream');
-
-require('should');
-require('mocha');
+var removeCode  = require('../');
+var gutil       = require('gulp-util');
+var File        = gutil.File;
+var fs          = require('fs');
+var es          = require('event-stream');
+var assert      = require('assert');
 
 
 describe('gulp-remove-code', function() {
@@ -66,7 +64,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode();
 
             stream.once('data', function(file) {
-                file.isNull().should.equal(true);
+                assert.strictEqual(file.isNull(), true);
                 done();
             });
 
@@ -78,7 +76,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode();
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal('');
+                assert.strictEqual(file.contents.toString('utf8'), '');
                 done();
             });
 
@@ -90,7 +88,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode({'no-message': true});
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.html'));
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('file-after.html'));
                 done();
             });
 
@@ -103,7 +101,7 @@ describe('gulp-remove-code', function() {
                 originalContents = htmlFile.contents.toString('utf8');
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(originalContents);
+                assert.equal(file.contents.toString('utf8'), originalContents);
                 done();
             });
 
@@ -115,7 +113,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode({'no-message': true});
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.cshtml'));
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('file-after.cshtml'));
                 done();
             });
 
@@ -128,7 +126,7 @@ describe('gulp-remove-code', function() {
                 originalContents = cshtmlFile.contents.toString('utf8');
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(originalContents);
+                assert.equal(file.contents.toString('utf8'), originalContents);
                 done();
             });
 
@@ -140,7 +138,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode({'production': true});
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.coffee'));
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('file-after.coffee'));
                 done();
             });
 
@@ -153,7 +151,7 @@ describe('gulp-remove-code', function() {
                 originalContents = coffeeFile.contents.toString('utf8');
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(originalContents);
+                assert.equal(file.contents.toString('utf8'), originalContents);
                 done();
             });
 
@@ -165,7 +163,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode({development:true});
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.jade'));
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('file-after.jade'));
                 done();
             });
 
@@ -178,7 +176,7 @@ describe('gulp-remove-code', function() {
                 originalContents = jadeFile.contents.toString('utf8');
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(originalContents);
+                assert.equal(file.contents.toString('utf8'), originalContents);
                 done();
             });
 
@@ -190,7 +188,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode({production: true, demo: true});
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.js'));
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('file-after.js'));
                 done();
             });
 
@@ -203,7 +201,7 @@ describe('gulp-remove-code', function() {
                 originalContents = jsFile.contents.toString('utf8');
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(originalContents);
+                assert.equal(file.contents.toString('utf8'), originalContents);
                 done();
             });
 
@@ -215,7 +213,7 @@ describe('gulp-remove-code', function() {
             var stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'});
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(readFixtureAsText('file-after.src'));
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('file-after.src'));
                 done();
             });
 
@@ -228,7 +226,7 @@ describe('gulp-remove-code', function() {
                 originalContents = srcFile.contents.toString('utf8');
 
             stream.once('data', function(file) {
-                file.contents.toString('utf8').should.equal(originalContents);
+                assert.equal(file.contents.toString('utf8'), originalContents);
                 done();
             });
 
@@ -278,7 +276,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal('');
+                    assert.strictEqual(data.toString('utf8'), '');
                     done();
                 }));
             });
@@ -292,7 +290,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(readFixtureAsText('file-after.html'));
+                    assert.equal(data.toString('utf8'), readFixtureAsText('file-after.html'));
                     done();
                 }));
             });
@@ -307,7 +305,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(originalContents);
+                    assert.equal(data.toString('utf8'), originalContents);
                     done();
                 }));
             });
@@ -321,7 +319,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(readFixtureAsText('file-after.cshtml'));
+                    assert.equal(data.toString('utf8'), readFixtureAsText('file-after.cshtml'));
                     done();
                 }));
             });
@@ -336,7 +334,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(originalContents);
+                    assert.equal(data.toString('utf8'), originalContents);
                     done();
                 }));
             });
@@ -350,7 +348,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(readFixtureAsText('file-after.coffee'));
+                    assert.equal(data.toString('utf8'), readFixtureAsText('file-after.coffee'));
                     done();
                 }));
             });
@@ -365,7 +363,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(originalContents);
+                    assert.equal(data.toString('utf8'), originalContents);
                     done();
                 }));
             });
@@ -379,7 +377,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(readFixtureAsText('file-after.jade'));
+                    assert.equal(data.toString('utf8'), readFixtureAsText('file-after.jade'));
                     done();
                 }));
             });
@@ -394,7 +392,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(originalContents);
+                    assert.equal(data.toString('utf8'), originalContents);
                     done();
                 }));
             });
@@ -408,7 +406,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(readFixtureAsText('file-after.js'));
+                    assert.equal(data.toString('utf8'), readFixtureAsText('file-after.js'));
                     done();
                 }));
             });
@@ -423,7 +421,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(originalContents);
+                    assert.equal(data.toString('utf8'), originalContents);
                     done();
                 }));
             });
@@ -437,7 +435,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(readFixtureAsText('file-after.src'));
+                    assert.equal(data.toString('utf8'), readFixtureAsText('file-after.src'));
                     done();
                 }));
             });
@@ -452,7 +450,7 @@ describe('gulp-remove-code', function() {
 
             stream.once('data', function(file) {
                 file.contents.pipe(es.wait(function(err, data) {
-                    data.toString('utf8').should.equal(originalContents);
+                    assert.equal(data.toString('utf8'), originalContents);
                     done();
                 }));
             });
