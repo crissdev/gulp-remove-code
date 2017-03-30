@@ -18,7 +18,8 @@ describe('gulp-remove-code', function() {
         cshtmlFile,
         jadeFile,
         jsFile,
-        srcFile;
+        srcFile,
+        spacesFile;
 
     function readFixtureAsText(name) {
         return fs.readFileSync('test/fixtures/' + name).toString('utf8');
@@ -57,6 +58,10 @@ describe('gulp-remove-code', function() {
             srcFile = new File({
                 path: 'text/fixtures/file-before.src',
                 contents: fs.readFileSync('test/fixtures/file-before.src')
+            });
+            spacesFile = new File({
+              path: 'text/fixtures/spaces-before.src',
+              contents: fs.readFileSync('test/fixtures/spaces-before.src')
             });
         });
 
@@ -233,6 +238,18 @@ describe('gulp-remove-code', function() {
             stream.write(srcFile);
             stream.end();
         });
+
+        it('should allow space between commentStart/commendEnd and removal start/end tag', function(done) {
+          var stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'});
+
+          stream.once('data', function(file) {
+            assert.equal(file.contents.toString('utf8'), readFixtureAsText('spaces-after.src'));
+            done();
+          });
+
+          stream.write(spacesFile);
+          stream.end();
+        });
     });
 
     describe('in stream mode', function() {
@@ -268,6 +285,10 @@ describe('gulp-remove-code', function() {
             srcFile = new File({
                 path: 'test/fixtures/file-before.src',
                 contents: fs.createReadStream('test/fixtures/file-before.src')
+            });
+            spacesFile = new File({
+                path: 'test/fixtures/spaces-before.src',
+                contents: fs.createReadStream('test/fixtures/spaces-before.src')
             });
         });
 
@@ -456,6 +477,20 @@ describe('gulp-remove-code', function() {
             });
 
             stream.write(srcFile);
+            stream.end();
+        });
+
+        it('should allow space between commentStart/commendEnd and removal start/end tag', function(done) {
+          var stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('spaces-after.src'));
+                    done();
+                }));
+            });
+
+            stream.write(spacesFile);
             stream.end();
         });
     });
