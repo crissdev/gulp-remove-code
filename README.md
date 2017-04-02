@@ -1,4 +1,4 @@
-#[gulp](https://github.com/gulpjs/gulp)-remove-code
+# [gulp](https://github.com/gulpjs/gulp)-remove-code
 
 [![npm version](https://badge.fury.io/js/gulp-remove-code.svg)](http://badge.fury.io/js/gulp-remove-code)
 [![Build Status](https://travis-ci.org/crissdev/gulp-remove-code.svg?branch=master)](https://travis-ci.org/crissdev/gulp-remove-code)
