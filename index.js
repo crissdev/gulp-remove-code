@@ -111,7 +111,7 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
 }
 
 function escapeForRegExp(str) {
-    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    return str.replace(/[-\/\\^$*+?.()|[\]{ }]/g, '\\$&');
 }
 
 function getRemovalTagsRegExp(commentStart, commentEnd, key) {
