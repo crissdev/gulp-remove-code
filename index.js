@@ -106,6 +106,8 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
                 regex = regexCache[fileExt + key] = getRemovalTagsRegExp(commentStart, commentEnd, key);
             }
             contents = contents.replace(regex, function(ignore, original, catupre) {
+              var not = (catupre === '!');
+              return (value ^ not) ? '' : original;
             });
         }
     }
