@@ -12,14 +12,22 @@ var assert      = require('assert');
 describe('gulp-remove-code', function() {
 
     var emptyFile,
-        coffeeFile,
         nullFile,
+        coffeeFile,
         htmlFile,
         cshtmlFile,
         jadeFile,
         jsFile,
         srcFile,
         spacesFile;
+
+      var notCoffeeFile,
+          notHtmlFile,
+          notCshtmlFile,
+          notJadeFile,
+          notJsFile,
+          notSrcFile,
+          notSpacesFile;
 
     function readFixtureAsText(name) {
         return fs.readFileSync('test/fixtures/' + name).toString('utf8');
@@ -32,6 +40,10 @@ describe('gulp-remove-code', function() {
                 path: 'test/fixtures/empty',
                 contents: new Buffer('')
             });
+            nullFile = new File({
+                contents: null
+            });
+
             htmlFile = new File({
                 path: 'test/fixtures/file-before.html',
                 contents: fs.readFileSync('test/fixtures/file-before.html')
@@ -39,9 +51,6 @@ describe('gulp-remove-code', function() {
             cshtmlFile = new File({
                 path: 'test/fixtures/file-before.cshtml',
                 contents: fs.readFileSync('test/fixtures/file-before.cshtml')
-            });
-            nullFile = new File({
-                contents: null
             });
             coffeeFile = new File({
                 path: 'test/fixtures/file-before.coffee',
@@ -62,6 +71,35 @@ describe('gulp-remove-code', function() {
             spacesFile = new File({
               path: 'text/fixtures/spaces-before.src',
               contents: fs.readFileSync('test/fixtures/spaces-before.src')
+            });
+
+            notHtmlFile = new File({
+                path: 'test/fixtures/not-file-before.html',
+                contents: fs.readFileSync('test/fixtures/not-file-before.html')
+            });
+            notCshtmlFile = new File({
+                path: 'test/fixtures/not-file-before.cshtml',
+                contents: fs.readFileSync('test/fixtures/not-file-before.cshtml')
+            });
+            notCoffeeFile = new File({
+                path: 'test/fixtures/not-file-before.coffee',
+                contents: fs.readFileSync('test/fixtures/not-file-before.coffee')
+            });
+            notJadeFile = new File({
+                path: 'test/fixtures/not-file-before.jade',
+                contents: fs.readFileSync('test/fixtures/not-file-before.jade')
+            });
+            notJsFile = new File({
+                path: 'test/fixtures/not-file-before.js',
+                contents: fs.readFileSync('test/fixtures/not-file-before.js')
+            });
+            notSrcFile = new File({
+                path: 'text/fixtures/not-file-before.src',
+                contents: fs.readFileSync('test/fixtures/not-file-before.src')
+            });
+            notSpacesFile = new File({
+              path: 'text/fixtures/not-spaces-before.src',
+              contents: fs.readFileSync('test/fixtures/not-spaces-before.src')
             });
         });
 
@@ -250,6 +288,170 @@ describe('gulp-remove-code', function() {
           stream.write(spacesFile);
           stream.end();
         });
+
+        /* not */
+
+        it('should remove code from html file when not condition is true', function(done) {
+            var stream = removeCode({'no-message': !true});
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-file-after.html'));
+                done();
+            });
+
+            stream.write(notHtmlFile);
+            stream.end();
+        });
+
+        it('should not remove code from html file when not condition is false', function(done) {
+            var stream = removeCode({'no-message': !false}),
+                originalContents = notHtmlFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), originalContents);
+                done();
+            });
+
+            stream.write(notHtmlFile);
+            stream.end();
+        });
+
+        it('should remove code from cshtml file when not condition is true', function(done) {
+            var stream = removeCode({'no-message': !true});
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-file-after.cshtml'));
+                done();
+            });
+
+            stream.write(notCshtmlFile);
+            stream.end();
+        });
+
+        it('should not remove code from cshtml file when not condition is false', function(done) {
+            var stream = removeCode({'no-message': !false}),
+                originalContents = notCshtmlFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), originalContents);
+                done();
+            });
+
+            stream.write(notCshtmlFile);
+            stream.end();
+        });
+
+        it('should remove code from coffee file when not condition is true', function(done) {
+            var stream = removeCode({'production': !true});
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-file-after.coffee'));
+                done();
+            });
+
+            stream.write(notCoffeeFile);
+            stream.end();
+        });
+
+        it('should not remove code from coffee file when not condition is false', function(done) {
+            var stream = removeCode({'production': !false}),
+                originalContents = notCoffeeFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), originalContents);
+                done();
+            });
+
+            stream.write(notCoffeeFile);
+            stream.end();
+        });
+
+        it('should remove code from jade file when not condition is true', function(done) {
+            var stream = removeCode({development:!true});
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-file-after.jade'));
+                done();
+            });
+
+            stream.write(notJadeFile);
+            stream.end();
+        });
+
+        it('should not remove code from jade file when not condition is false', function(done) {
+            var stream = removeCode({development:!false}),
+                originalContents = notJadeFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), originalContents);
+                done();
+            });
+
+            stream.write(notJadeFile);
+            stream.end();
+        });
+
+        it('should remove code from js file when not condition is true', function(done) {
+            var stream = removeCode({production: !true, demo: !true});
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-file-after.js'));
+                done();
+            });
+
+            stream.write(notJsFile);
+            stream.end();
+        });
+
+        it('should not remove code from js file when not condition is false', function(done) {
+            var stream = removeCode({production: !false, demo: !false}),
+                originalContents = notJsFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), originalContents);
+                done();
+            });
+
+            stream.write(notJsFile);
+            stream.end();
+        });
+
+        it('should remove code from custom file when not condition is true', function(done) {
+            var stream = removeCode({development: !true, commentStart: '/#', commentEnd: '#/'});
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-file-after.src'));
+                done();
+            });
+
+            stream.write(notSrcFile);
+            stream.end();
+        });
+
+        it('should not remove code from custom file when not condition is false', function(done) {
+            var stream = removeCode({development: !false, commentStart: '/#', commentEnd: '#/'}),
+                originalContents = notSrcFile.contents.toString('utf8');
+
+            stream.once('data', function(file) {
+                assert.equal(file.contents.toString('utf8'), originalContents);
+                done();
+            });
+
+            stream.write(notSrcFile);
+            stream.end();
+        });
+
+        it('should allow space between commentStart/commendEnd and removal start/end tag', function(done) {
+          var stream = removeCode({development: !true, commentStart: '/#', commentEnd: '#/'});
+
+          stream.once('data', function(file) {
+            assert.equal(file.contents.toString('utf8'), readFixtureAsText('not-spaces-after.src'));
+            done();
+          });
+
+          stream.write(notSpacesFile);
+          stream.end();
+        });
     });
 
     describe('in stream mode', function() {
@@ -258,6 +460,11 @@ describe('gulp-remove-code', function() {
                 path: 'test/empty',
                 contents: fs.createReadStream('test/fixtures/empty')
             });
+            nullFile = new File({
+                path: 'test/fixtures/file-before.html',
+                contents: null
+            });
+
             htmlFile = new File({
                 path: 'test/fixtures/file-before.html',
                 contents: fs.createReadStream('test/fixtures/file-before.html')
@@ -265,10 +472,6 @@ describe('gulp-remove-code', function() {
             cshtmlFile = new File({
                 path: 'test/fixtures/file-before.cshtml',
                 contents: fs.createReadStream('test/fixtures/file-before.cshtml')
-            });
-            nullFile = new File({
-                path: 'test/fixtures/file-before.html',
-                contents: null
             });
             coffeeFile = new File({
                 path: 'test/fixtures/file-before.coffee',
@@ -289,6 +492,35 @@ describe('gulp-remove-code', function() {
             spacesFile = new File({
                 path: 'test/fixtures/spaces-before.src',
                 contents: fs.createReadStream('test/fixtures/spaces-before.src')
+            });
+
+            notHtmlFile = new File({
+                path: 'test/fixtures/not-file-before.html',
+                contents: fs.createReadStream('test/fixtures/not-file-before.html')
+            });
+            notCshtmlFile = new File({
+                path: 'test/fixtures/not-file-before.cshtml',
+                contents: fs.createReadStream('test/fixtures/not-file-before.cshtml')
+            });
+            notCoffeeFile = new File({
+                path: 'test/fixtures/not-file-before.coffee',
+                contents: fs.createReadStream('test/fixtures/not-file-before.coffee')
+            });
+            notJadeFile = new File({
+                path: 'test/fixtures/not-file-before.jade',
+                contents: fs.createReadStream('test/fixtures/not-file-before.jade')
+            });
+            notJsFile = new File({
+                path: 'test/fixtures/not-file-before.js',
+                contents: fs.createReadStream('test/fixtures/not-file-before.js')
+            });
+            notSrcFile = new File({
+                path: 'test/fixtures/not-file-before.src',
+                contents: fs.createReadStream('test/fixtures/not-file-before.src')
+            });
+            notSpacesFile = new File({
+                path: 'test/fixtures/not-spaces-before.src',
+                contents: fs.createReadStream('test/fixtures/not-spaces-before.src')
             });
         });
 
@@ -491,6 +723,196 @@ describe('gulp-remove-code', function() {
             });
 
             stream.write(spacesFile);
+            stream.end();
+        });
+
+        /* not */
+
+        it('should remove code from html file when not condition is true', function(done) {
+            var stream = removeCode({'no-message': !true});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-file-after.html'));
+                    done();
+                }));
+            });
+
+            stream.write(notHtmlFile);
+            stream.end();
+        });
+
+        it('should not remove code from html file when not condition is false', function(done) {
+            var stream = removeCode({'no-message': !false}),
+                originalContents = readFixtureAsText('not-file-before.html');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(notHtmlFile);
+            stream.end();
+        });
+
+        it('should remove code from cshtml file when not condition is true', function(done) {
+            var stream = removeCode({'no-message': !true});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-file-after.cshtml'));
+                    done();
+                }));
+            });
+
+            stream.write(notCshtmlFile);
+            stream.end();
+        });
+
+        it('should not remove code from cshtml file when not condition is false', function(done) {
+            var stream = removeCode({'no-message': !false}),
+                originalContents = readFixtureAsText('not-file-before.cshtml');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(notCshtmlFile);
+            stream.end();
+        });
+
+        it('should remove code from coffee file when not condition is true', function(done) {
+            var stream = removeCode({'production': !true});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-file-after.coffee'));
+                    done();
+                }));
+            });
+
+            stream.write(notCoffeeFile);
+            stream.end();
+        });
+
+        it('should not remove code from coffee file when not condition is false', function(done) {
+            var stream = removeCode({'production': !false}),
+                originalContents = readFixtureAsText('not-file-before.coffee');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(notCoffeeFile);
+            stream.end();
+        });
+
+        it('should remove code from jade file when not condition is true', function(done) {
+            var stream = removeCode({development:!true});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-file-after.jade'));
+                    done();
+                }));
+            });
+
+            stream.write(notJadeFile);
+            stream.end();
+        });
+
+        it('should not remove code from jade file when not condition is false', function(done) {
+            var stream = removeCode({development:!false}),
+                originalContents = readFixtureAsText('not-file-before.jade');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(notJadeFile);
+            stream.end();
+        });
+
+        it('should remove code from js file when not condition is true', function(done) {
+            var stream = removeCode({production: !true, demo: !true});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-file-after.js'));
+                    done();
+                }));
+            });
+
+            stream.write(notJsFile);
+            stream.end();
+        });
+
+        it('should not remove code from js file when not condition is false', function(done) {
+            var stream = removeCode({production: !false, demo: !false}),
+                originalContents = readFixtureAsText('not-file-before.js');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(notJsFile);
+            stream.end();
+        });
+
+        it('should remove code from custom file when not condition is true', function(done) {
+            var stream = removeCode({development: !true, commentStart: '/#', commentEnd: '#/'});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-file-after.src'));
+                    done();
+                }));
+            });
+
+            stream.write(notSrcFile);
+            stream.end();
+        });
+
+        it('should not remove code from custom file when not condition is false', function(done) {
+            var stream = removeCode({development: !false, commentStart: '/#', commentEnd: '#/'}),
+                originalContents = readFixtureAsText('not-file-before.src');
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), originalContents);
+                    done();
+                }));
+            });
+
+            stream.write(notSrcFile);
+            stream.end();
+        });
+
+        it('should allow space between commentStart/commendEnd and removal start/end tag', function(done) {
+          var stream = removeCode({development: !true, commentStart: '/#', commentEnd: '#/'});
+
+            stream.once('data', function(file) {
+                file.contents.pipe(es.wait(function(err, data) {
+                    assert.equal(data.toString('utf8'), readFixtureAsText('not-spaces-after.src'));
+                    done();
+                }));
+            });
+
+            stream.write(notSpacesFile);
             stream.end();
         });
     });
