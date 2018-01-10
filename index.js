@@ -27,8 +27,8 @@ module.exports = function(options) {
                     'The option will be ignored. commentEnd: ' + commentEnd));
             }
         }
-        else if (options[key]) {
-            conditions.push(key);
+        else {
+          conditions.push([key, options[key]]);
         }
     });
 
@@ -98,13 +98,17 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
 
     if (contents.length > 0) {
         for (var i = 0; i < conditions.length; i++) {
-            var key = conditions[i],
+            var key = conditions[i][0],
+                value = conditions[i][1],
                 regex = regexCache[fileExt + key];
 
             if (!regex) {
                 regex = regexCache[fileExt + key] = getRemovalTagsRegExp(commentStart, commentEnd, key);
             }
-            contents = contents.replace(regex, '');
+            contents = contents.replace(regex, function(ignore, original, catupre) {
+              var not = (catupre === '!');
+              return (value ^ not) ? '' : original;
+            });
         }
     }
     return new Buffer(contents);
@@ -115,9 +119,10 @@ function escapeForRegExp(str) {
 }
 
 function getRemovalTagsRegExp(commentStart, commentEnd, key) {
+    var escapedKey = escapeForRegExp(key);
     return new RegExp('(' +
-        escapeForRegExp(commentStart) + '\\s*' + escapeForRegExp('removeIf(' + key + ')') + '\\s*' + escapeForRegExp(commentEnd) + '\\s*' +
+        escapeForRegExp(commentStart) + '\\s*removeIf\\((!?)' + escapedKey + '\\)\\s*' + escapeForRegExp(commentEnd) + '\\s*' +
         '(\\n|\\r|.)*?' +
-        escapeForRegExp(commentStart) + '\\s*' + escapeForRegExp('endRemoveIf(' + key + ')') + '\\s*' + escapeForRegExp(commentEnd) + ')',
+        escapeForRegExp(commentStart) + '\\s*endRemoveIf\\((!?)' + escapedKey + '\\)\\s*' + escapeForRegExp(commentEnd) + ')',
         'gi');
 }
