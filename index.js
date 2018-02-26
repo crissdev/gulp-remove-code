@@ -8,7 +8,6 @@ const getFileExt = require('path').extname;
 const escapeStringRegexp = require('escape-string-regexp');
 const PLUGIN_NAME = 'gulp-remove-code';
 const regexCache = new Map([]);
-
 const extensions = new Map([
   ['coffee', [['#', ''], ['###', '###']]],
   ['css', [['/*', '*/']]],
@@ -21,7 +20,7 @@ const extensions = new Map([
   ['tsx', [['//', ''], ['/*', '*/']]],
 ]);
 
-module.exports = function(options) {
+module.exports = function gulpRemoveCode(options) {
   options = options || {};
 
   let commentEnd = '';
@@ -101,7 +100,6 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
   else {
     commentTypes = [[commentStart, commentEnd]];
   }
-
   let contents = buffer.toString();
 
   if (contents.length > 0) {
@@ -109,7 +107,9 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
       const key = conditions[i][0];
       const value = conditions[i][1];
 
-      commentTypes.forEach(([commentStart, commentEnd]) => {
+      commentTypes.forEach(item => {
+        const commentStart = item[0];
+        const commentEnd = item[1];
         let regex = getRemovalTagsRegExp(commentStart, commentEnd, key);
 
         contents = contents.replace(regex, function(ignore, original, capture) {
@@ -122,9 +122,6 @@ function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions
   return new Buffer(contents);
 }
 
-function escapeForRegExp(str) {
-  return str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-}
 
 /**
  * @param {string} commentStart
@@ -143,18 +140,18 @@ function getRemovalTagsRegExp(commentStart, commentEnd, key) {
   else {
     pattern = [
       '(',
-      escapeForRegExp(commentStart),
+      escapeStringRegexp(commentStart),
       '\\s*removeIf\\((!?)',
       escapedKey,
       '\\)\\s*',
-      escapeForRegExp(commentEnd),
+      escapeStringRegexp(commentEnd),
       '\\s*' +
       '(\\n|\\r|.)*?',
-      escapeForRegExp(commentStart),
+      escapeStringRegexp(commentStart),
       '\\s*endRemoveIf\\((!?)',
       escapedKey,
       '\\)\\s*',
-      escapeForRegExp(commentEnd),
+      escapeStringRegexp(commentEnd),
       ')',
     ].join('');
   }

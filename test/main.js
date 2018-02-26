@@ -32,7 +32,6 @@ describe('gulp-remove-code', function() {
   }
 
   describe('in buffer mode', function() {
-
     beforeEach(function() {
       emptyFile = new File({
         path: 'test/fixtures/empty',
