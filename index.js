@@ -1,128 +1,162 @@
 'use strict';
 
-var gutil = require('gulp-util'),
-    es = require('event-stream'),
-    BufferStreams = require('bufferstreams'),
-    extname = require('path').extname,
-    regexCache = {};
+const fancyLog = require('fancy-log');
+const PluginError = require('plugin-error');
+const es = require('event-stream');
+const BufferStreams = require('bufferstreams');
+const getFileExt = require('path').extname;
+const escapeStringRegexp = require('escape-string-regexp');
+const PLUGIN_NAME = 'gulp-remove-code';
+const regexCache = new Map([]);
+
+const extensions = new Map([
+  ['coffee', [['#', ''], ['###', '###']]],
+  ['css', [['/*', '*/']]],
+  ['html', [['<!--', '-->']]],
+  ['cshtml', [['@*', '*@']]],
+  ['jade', [['//-', '']]],
+  ['js', [['//', ''], ['/*', '*/']]],
+  ['ts', [['//', ''], ['/*', '*/']]],
+  ['jsx', [['//', ''], ['/*', '*/']]],
+  ['tsx', [['//', ''], ['/*', '*/']]],
+]);
 
 module.exports = function(options) {
-    options = options || {};
+  options = options || {};
 
-    var conditions = [],
-        commentEnd = '',
-        commentStart;       // not set means autodetect
+  let commentEnd = '';
+  let commentStart;       // not set means autodetect
 
-    Object.keys(options).forEach(function(key) {
-        if (key === 'commentStart') {
-            commentStart = options.commentStart;
-        }
-        else if (key === 'commentEnd') {
-            if (commentStart) {
-                // set it only if commentStart is provided
-                commentEnd = options.commentEnd;
-            }
-            else {
-                gutil.log(gutil.colors.yellow('gulp-remove-code: commentStart was not set but commentEnd provided. ' +
-                    'The option will be ignored. commentEnd: ' + commentEnd));
-            }
-        }
-        else {
-          conditions.push([key, options[key]]);
-        }
-    });
+  const conditions = Object.keys(options).reduce((conditions, key) => {
+    if (key === 'commentStart') {
+      commentStart = options.commentStart;
+    }
+    else if (key === 'commentEnd') {
+      if (commentStart) {
+        // set it only if commentStart is provided
+        commentEnd = options.commentEnd;
+      }
+      else {
+        fancyLog.warn(`${PLUGIN_NAME}: commentStart was not set but commentEnd provided.` +
+          ` The option will be ignored. commentEnd: ${commentEnd}`);
+      }
+    }
+    else {
+      conditions.push([key, options[key]]);
+    }
+    return conditions;
+  }, []);
 
-    return es.map(function(file, callback) {
-        var fileExt = (file.path ? extname(file.path).substr(1).toLowerCase() : '');
-        if (file.isNull()) {
-            // Nothing to do if no contents
-            callback(null, file);
-        }
-        else if (file.isStream()) {
-            file.contents = file.contents.pipe(new BufferStreams(function(err, buf, cb) {
-                try {
-                    if (err) {
-                        return cb(new gutil.PluginError('gulp-remove-code', err.message));
-                    }
-                    cb(null, applyReplacements(buf, fileExt, commentStart, commentEnd, conditions));
-                }
-                catch (err) {
-                    cb(new gutil.PluginError('gulp-remove-code', err.message));
-                }
-            }));
-            callback(null, file);
-        }
-        else if (file.isBuffer()) {
-            try {
-                file.contents = applyReplacements(file.contents, fileExt, commentStart, commentEnd, conditions);
-                callback(null, file);
+  return es.map(
+    /**
+     * @param {File} file
+     * @param {Function} callback
+     */
+    function(file, callback) {
+      const fileExt = (file.path ? getFileExt(file.path).substr(1).toLowerCase() : '');
+      if (file.isNull()) {
+        // Nothing to do if no contents
+        callback(null, file);
+      }
+      else if (file.isStream()) {
+        file.contents = file.contents.pipe(new BufferStreams(function(err, buf, cb) {
+          try {
+            if (err) {
+              return cb(new PluginError(PLUGIN_NAME, err.message));
             }
-            catch (err) {
-                callback(err, null);
-            }
+            cb(null, applyReplacements(buf, fileExt, commentStart, commentEnd, conditions));
+          }
+          catch (err) {
+            cb(new PluginError(PLUGIN_NAME, err.message));
+          }
+        }));
+        callback(null, file);
+      }
+      else if (file.isBuffer()) {
+        try {
+          file.contents = applyReplacements(file.contents, fileExt, commentStart, commentEnd, conditions);
+          callback(null, file);
         }
+        catch (err) {
+          callback(err, null);
+        }
+      }
     });
 };
 
+/**
+ * @param {Buffer} buffer
+ * @param {string} fileExt
+ * @param {string} [commentStart]
+ * @param {string} [commentEnd]
+ * @param {Array.<string>} conditions
+ * @returns {Buffer}
+ */
 function applyReplacements(buffer, fileExt, commentStart, commentEnd, conditions) {
-    if (!commentStart) {
-        switch (fileExt) {
-            case 'coffee':
-                commentStart = '#';
-                commentEnd = '';
-                break;
-            case 'css':
-                commentStart = '/*';
-                commentEnd = '*/';
-                break;
-            case 'html':
-                commentStart = '<!--';
-                commentEnd = '-->';
-                break;
-            case 'cshtml':
-                commentStart = '@*';
-                commentEnd = '*@';
-                break;
-            case 'jade':
-                commentStart = '//-';
-                commentEnd = '';
-                break;
-            default:
-                commentStart = '//';
-                commentEnd = '';
-                break;
-        }
+  let commentTypes;
+
+  if (!commentStart) {
+    commentTypes = extensions.has(fileExt) ? extensions.get(fileExt) : [['//', '']];
+  }
+  else {
+    commentTypes = [[commentStart, commentEnd]];
+  }
+
+  let contents = buffer.toString();
+
+  if (contents.length > 0) {
+    for (let i = 0; i < conditions.length; i++) {
+      const key = conditions[i][0];
+      const value = conditions[i][1];
+
+      commentTypes.forEach(([commentStart, commentEnd]) => {
+        let regex = getRemovalTagsRegExp(commentStart, commentEnd, key);
+
+        contents = contents.replace(regex, function(ignore, original, capture) {
+          const not = (capture === '!');
+          return (value ^ not) ? '' : original;
+        });
+      });
     }
-
-    var contents = buffer.toString('utf8');
-
-    if (contents.length > 0) {
-        for (var i = 0; i < conditions.length; i++) {
-            var key = conditions[i][0],
-                value = conditions[i][1],
-                regex = regexCache[fileExt + key];
-
-            if (!regex) {
-                regex = regexCache[fileExt + key] = getRemovalTagsRegExp(commentStart, commentEnd, key);
-            }
-            contents = contents.replace(regex, function(ignore, original, catupre) {
-              var not = (catupre === '!');
-              return (value ^ not) ? '' : original;
-            });
-        }
-    }
-    return new Buffer(contents);
+  }
+  return new Buffer(contents);
 }
 
 function escapeForRegExp(str) {
-    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  return str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
+/**
+ * @param {string} commentStart
+ * @param {string} commentEnd
+ * @param {string} key
+ * @returns {RegExp}
+ */
 function getRemovalTagsRegExp(commentStart, commentEnd, key) {
-    var escapedKey = escapeForRegExp(key);
-    return new RegExp('(' +
-        escapeForRegExp(commentStart) + '\\s*removeIf\\((!?)' + escapedKey + '\\)\\s*' + escapeForRegExp(commentEnd) + '\\s*' +
-        '(\\n|\\r|.)*?' +
-        escapeForRegExp(commentStart) + '\\s*endRemoveIf\\((!?)' + escapedKey + '\\)\\s*' + escapeForRegExp(commentEnd) + ')',
-        'gi');
+  const cacheKey = `${commentStart}${commentEnd}${key}`;
+  const escapedKey = escapeStringRegexp(key);
+  let pattern;
+
+  if (regexCache.has(cacheKey)) {
+    pattern = regexCache.get(cacheKey);
+  }
+  else {
+    pattern = [
+      '(',
+      escapeForRegExp(commentStart),
+      '\\s*removeIf\\((!?)',
+      escapedKey,
+      '\\)\\s*',
+      escapeForRegExp(commentEnd),
+      '\\s*' +
+      '(\\n|\\r|.)*?',
+      escapeForRegExp(commentStart),
+      '\\s*endRemoveIf\\((!?)',
+      escapedKey,
+      '\\)\\s*',
+      escapeForRegExp(commentEnd),
+      ')',
+    ].join('');
+  }
+  return new RegExp(pattern, 'gi');
 }
