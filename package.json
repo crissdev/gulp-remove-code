@@ -39,12 +39,12 @@
     "escape-string-regexp": "^1.0.5",
     "event-stream": "^3.3.4",
     "fancy-log": "^1.3.2",
-    "plugin-error": "^0.1.2"
+    "plugin-error": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^4.14.0",
+    "eslint": "^4.18.1",
     "eslint-config-gulp": "^2.1.0",
-    "mocha": "^4.1.0",
+    "mocha": "^5.0.1",
     "vinyl": "^2.1.0"
   },
   "eslintConfig": {
