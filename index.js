@@ -58,17 +58,21 @@ module.exports = function gulpRemoveCode(options) {
         callback(null, file);
       }
       else if (file.isStream()) {
-        file.contents = file.contents.pipe(new BufferStreams(function(err, buf, cb) {
-          try {
+        file.contents = file.contents.pipe(
+          new BufferStreams(function(err, buf, cb) {
             if (err) {
-              return cb(new PluginError(PLUGIN_NAME, err.message));
+              return cb(new PluginError(PLUGIN_NAME, err));
             }
-            cb(null, applyReplacements(buf, fileExt, commentStart, commentEnd, conditions));
-          }
-          catch (err) {
-            cb(new PluginError(PLUGIN_NAME, err.message));
-          }
-        }));
+            let result, error;
+            try {
+              result = applyReplacements(buf, fileExt, commentStart, commentEnd, conditions);
+            }
+            catch (err) {
+              error = new PluginError(PLUGIN_NAME, err);
+            }
+            cb(error, result);
+          })
+        );
         callback(null, file);
       }
       else if (file.isBuffer()) {

@@ -1,6 +1,6 @@
 # [gulp](https://github.com/gulpjs/gulp)-remove-code
 
-[![npm version](https://badge.fury.io/js/gulp-remove-code.svg)](http://badge.fury.io/js/gulp-remove-code)
+[![npm version](https://badge.fury.io/js/gulp-remove-code.svg)](https://badge.fury.io/js/gulp-remove-code)
 [![Build Status](https://travis-ci.org/crissdev/gulp-remove-code.svg?branch=master)](https://travis-ci.org/crissdev/gulp-remove-code)
 [![Dependency Status](https://david-dm.org/crissdev/gulp-remove-code.svg)](https://david-dm.org/crissdev/gulp-remove-code)
 
@@ -108,4 +108,4 @@ Configure how the start comment is defined.
 
 ## License
 
-MIT © [Cristian Trifan](http://crissdev.com)
+MIT © [Cristian Trifan](https://crissdev.com)
