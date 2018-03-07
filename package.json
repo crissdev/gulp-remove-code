@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && mocha",
-    "lint": "eslint -c package.json index.js test/main.js"
+    "lint": "eslint --max-warnings 0 -c package.json index.js test/main.js"
   },
   "files": [
     "index.js"
