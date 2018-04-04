@@ -29,13 +29,6 @@ gulp.src('./src/*.js')
 gulp.src('./src/*.coffee')
   .pipe(removeCode({ noDevFeatures: true }))
   .pipe(gulp.dest('./dist/'))
-
-// Remove code only if conditions are like: removeIf(!production)
-//
-// Important: The presence of key production is required
-gulp.src('./src/*.coffee')
-  .pipe(removeCode({ production: false }))
-  .pipe(gulp.dest('./dist/'))
 ```
 
 ## Examples
@@ -69,8 +62,13 @@ The plugin will remove the code inside the comments, as well as the comments.
 var value = JSON.stringify({key: 'value'});
 
 //removeIf(production)
-value = JSON.stringify({key: 'value'}, null, 2);
+value = JSON.stringify({key: 'value', inDevelopment: true}, null, 2);
 //endRemoveIf(production)
+
+//removeIf(!development)
+value = JSON.stringify({key: 'value', inProduction: true}, null, 2);
+//endRemoveIf(production)
+
 ```
 
 ```js
@@ -82,6 +80,33 @@ gulp.src('./src/file.js')
 ```
 
 The plugin will remove the code inside the comments, as well as the comments.
+
+
+### Advanced usage
+
+Starting with version 2 of this plugin, conditions can also be expressed using the `!` specifier.
+
+
+```js
+// Remove code using *!* (negated) conditions
+
+//----------- gulpfile.js -----------
+//
+var removeCode = require('gulp-remove-code');
+
+gulp.src('./src/file.js')
+  .pipe(removeCode({ production: false }))
+  .pipe(gulp.dest('./dist'))
+
+
+//----------- app-file.js -----------
+//
+//removeIf(!production)
+value = JSON.stringify({key: 'value'}, null, 2);
+//endRemoveIf(production)
+
+```
+
 
 
 ## API
