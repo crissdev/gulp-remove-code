@@ -1,4 +1,4 @@
-# [gulp](https://github.com/gulpjs/gulp)-remove-code
+# gulp-remove-code
 
 [![npm version](https://badge.fury.io/js/gulp-remove-code.svg)](https://badge.fury.io/js/gulp-remove-code)
 [![Build Status](https://travis-ci.org/crissdev/gulp-remove-code.svg?branch=master)](https://travis-ci.org/crissdev/gulp-remove-code)
@@ -10,7 +10,7 @@
 ## Install
 
 ```sh
-npm install --save-dev gulp-remove-code
+npm install gulp-remove-code --save-dev
 ```
 
 ## Usage
@@ -29,6 +29,13 @@ gulp.src('./src/*.js')
 gulp.src('./src/*.coffee')
   .pipe(removeCode({ noDevFeatures: true }))
   .pipe(gulp.dest('./dist/'))
+
+// Remove code only if conditions are like: removeIf(!production)
+//
+// Important: The presence of key production is required
+gulp.src('./src/*.coffee')
+  .pipe(removeCode({ production: false }))
+  .pipe(gulp.dest('./dist/'))
 ```
 
 ## Examples
@@ -41,7 +48,7 @@ gulp.src('./src/*.coffee')
   <div class="sandbox-banner">Running in sandbox environment</div>
   <!--endRemoveIf(production)-->
 
-  <span>Removing code is ready.</span>
+  <span>Removing code is easy.</span>
 </div>
 ```
 
@@ -103,7 +110,7 @@ Type: `String`
 
 Default: `Detected from file extension. Use empty as fallback.`
 
-Configure how the start comment is defined.
+Configure how the end comment is defined.
 
 
 ## License
