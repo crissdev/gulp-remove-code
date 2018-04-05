@@ -62,12 +62,12 @@ The plugin will remove the code inside the comments, as well as the comments.
 var value = JSON.stringify({key: 'value'});
 
 //removeIf(production)
-value = JSON.stringify({key: 'value', inDevelopment: true}, null, 2);
+value = JSON.stringify({key: 'value', production: true}, null, 2);
 //endRemoveIf(production)
 
 //removeIf(!development)
-value = JSON.stringify({key: 'value', inProduction: true}, null, 2);
-//endRemoveIf(production)
+value = JSON.stringify({key: 'value', development: false}, null, 2);
+//endRemoveIf(!development)
 
 ```
 
@@ -102,8 +102,8 @@ gulp.src('./src/file.js')
 //----------- app-file.js -----------
 //
 //removeIf(!production)
-value = JSON.stringify({key: 'value'}, null, 2);
-//endRemoveIf(production)
+value = JSON.stringify({key: 'value', production: false}, null, 2);
+//endRemoveIf(!production)
 
 ```
 
