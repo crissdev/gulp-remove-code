@@ -16,7 +16,7 @@ npm install gulp-remove-code --save-dev
 ## Usage
 
 ```js
-var removeCode = require('gulp-remove-code');
+const removeCode = require('gulp-remove-code');
 
 gulp.src('./src/*.js')
   .pipe(removeCode({ noDevFeatures: true }))
@@ -46,7 +46,7 @@ gulp.src('./src/*.coffee')
 ```
 
 ```js
-var removeCode = require('gulp-remove-code');
+const removeCode = require('gulp-remove-code');
 
 gulp.src('./src/file.html')
   .pipe(removeCode({ production: true }))
@@ -59,7 +59,7 @@ The plugin will remove the code inside the comments, as well as the comments.
 ### Remove code JavaScript files
 
 ```js
-var value = JSON.stringify({key: 'value'});
+let value = JSON.stringify({key: 'value'});
 
 //removeIf(production)
 value = JSON.stringify({key: 'value', production: true}, null, 2);
@@ -72,7 +72,7 @@ value = JSON.stringify({key: 'value', development: false}, null, 2);
 ```
 
 ```js
-var removeCode = require('gulp-remove-code');
+const removeCode = require('gulp-remove-code');
 
 gulp.src('./src/file.js')
   .pipe(removeCode({ production: true }))
@@ -92,7 +92,7 @@ Starting with version 2 of this plugin, conditions can also be expressed using t
 
 //----------- gulpfile.js -----------
 //
-var removeCode = require('gulp-remove-code');
+const removeCode = require('gulp-remove-code');
 
 gulp.src('./src/file.js')
   .pipe(removeCode({ production: false }))
