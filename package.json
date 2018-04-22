@@ -4,7 +4,7 @@
   "description": "Remove sections of code from files based on conditions",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && mocha",
+    "test": "nsp check && npm run lint && mocha",
     "lint": "eslint --max-warnings 0 -c package.json index.js test/main.js"
   },
   "files": [
@@ -45,6 +45,7 @@
     "eslint": "^4.18.2",
     "eslint-config-gulp": "^2.1.0",
     "mocha": "^5.0.3",
+    "nsp": "^3.2.1",
     "vinyl": "^2.1.0"
   },
   "eslintConfig": {
