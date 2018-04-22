@@ -1,4 +1,9 @@
-/node_modules/
-/package-lock.json
-/yarn.lock
+node_modules/
 .idea/
+
+# Ignore package-lock.json and yarn.lock
+package-lock.json
+yarn.lock
+
+# Ignore logs
+*.log
