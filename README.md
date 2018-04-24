@@ -1,7 +1,9 @@
 # gulp-remove-code
 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![npm version](https://badge.fury.io/js/gulp-remove-code.svg)](https://badge.fury.io/js/gulp-remove-code)
 [![Build Status](https://travis-ci.org/crissdev/gulp-remove-code.svg?branch=master)](https://travis-ci.org/crissdev/gulp-remove-code)
+[![Build status](https://ci.appveyor.com/api/projects/status/kxeyejflng4v6yjn/branch/master?svg=true&passingText=master%20-%20OK)](https://ci.appveyor.com/project/crissdev/gulp-remove-code/branch/master)
 [![Dependency Status](https://david-dm.org/crissdev/gulp-remove-code.svg)](https://david-dm.org/crissdev/gulp-remove-code)
 
 > A [Gulp](https://github.com/gulpjs/gulp) plugin to remove sections of code from files based on conditions
