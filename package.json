@@ -1,6 +1,6 @@
 {
   "name": "gulp-remove-code",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Remove sections of code from files based on conditions",
   "main": "index.js",
   "scripts": {
