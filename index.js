@@ -151,6 +151,8 @@ function removeCode (file, buf, options) {
 function prepareOptions (file, options) {
   options = assign({}, options)
 
+  const {commentStart, commentEnd} = options
+
   if (!file.isNull()) {
     options.conditions = Object.keys(options).reduce((conditions, key) => {
       if (key !== 'commentStart' && key !== 'commentEnd') {
@@ -159,10 +161,15 @@ function prepareOptions (file, options) {
       return conditions
     }, [])
 
-    if (!options.commentStart) {
+    if (!commentStart) {
       // Detect comment tokens
       const fileExt = getFileExt(file.path)
       options.commentTypes = extensions.has(fileExt) ? extensions.get(fileExt) : [['//', '']]
+    } else if (Array.isArray(commentStart) && Array.isArray(commentEnd) && commentStart.length === commentEnd.length) {
+      options.commentTypes = []
+      for (let i = 0; i < commentStart.length; i++)  {
+        options.commentTypes.push([commentStart[i], commentEnd[i]])
+      }
     } else {
       options.commentTypes = [[options.commentStart, options.commentEnd || '']]
     }

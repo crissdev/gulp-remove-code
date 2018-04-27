@@ -284,6 +284,42 @@ describe('gulp-remove-code', function () {
       stream.end()
     })
 
+    it('should remove code from php file when condition is true', done => {
+      const stream = removeCode({
+        development: true,
+        commentStart: ['/*', '//', '<!--', '<?php /*'],
+        commentEnd: ['*/', '', '-->', '*/ ?>']
+      })
+      stream.once('data', file => {
+        assert.equal(file.contents.toString(), '')
+        done()
+      })
+
+      stream.write(htmlFile = new File({
+        path: 'file.php',
+        contents: Buffer.from(`<!DOCTYPE html>
+<div>
+      <!-- removeIf(development) -->secret_html<!--endRemoveIf(development)-->
+<span>public</span>
+      <?php /* removeIf(development) */ ?>secret_php<?php /* endRemoveIf(development) */ ?>
+<span>public</span>
+      <script>
+          // removeIf(development)
+          let secret_js = 1;
+          // endRemoveIf(development)
+          let public = 2;
+          
+          /* removeIf(development) */
+          let secret_js = 3;
+          /* endRemoveIf(development) */
+      </script>
+<span>public</span>
+</div>
+`)
+      }))
+      stream.end()
+    })
+
     /* not */
 
     it('should remove code from html file when not condition is true', function (done) {
