@@ -2,8 +2,8 @@
 
 const removeCode = require('./index.js')
 const File = require('vinyl')
+const concat = require('concat-stream')
 const fs = require('fs')
-const es = require('event-stream')
 const assert = require('assert')
 
 describe('gulp-remove-code', function () {
@@ -523,7 +523,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode()
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.strictEqual(data.toString(), '')
           done()
         }))
@@ -537,7 +537,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({'no-message': true})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('file-after.html'))
           done()
         }))
@@ -552,7 +552,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('file-before.html')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -566,7 +566,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({'no-message': true})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('file-after.cshtml'))
           done()
         }))
@@ -581,7 +581,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('file-before.cshtml')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -595,7 +595,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({'production': true})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('file-after.coffee'))
           done()
         }))
@@ -610,7 +610,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('file-before.coffee')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -624,7 +624,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({development: true})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('file-after.jade'))
           done()
         }))
@@ -639,7 +639,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('file-before.jade')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -653,7 +653,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({production: true, demo: true})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('file-after.js'))
           done()
         }))
@@ -668,7 +668,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('file-before.js')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -682,7 +682,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('file-after.src'))
           done()
         }))
@@ -697,7 +697,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('file-before.src')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -711,7 +711,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({development: true, commentStart: '/#', commentEnd: '#/'})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('spaces-after.src'))
           done()
         }))
@@ -727,7 +727,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({'no-message': false})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-file-after.html'))
           done()
         }))
@@ -742,7 +742,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('not-file-before.html')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -756,7 +756,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({'no-message': false})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-file-after.cshtml'))
           done()
         }))
@@ -771,7 +771,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('not-file-before.cshtml')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -785,7 +785,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({'production': false})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-file-after.coffee'))
           done()
         }))
@@ -800,7 +800,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('not-file-before.coffee')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -814,7 +814,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({development: false})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-file-after.jade'))
           done()
         }))
@@ -829,7 +829,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('not-file-before.jade')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -843,7 +843,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({production: false, demo: false})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-file-after.js'))
           done()
         }))
@@ -858,7 +858,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('not-file-before.js')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -872,7 +872,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({development: false, commentStart: '/#', commentEnd: '#/'})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-file-after.src'))
           done()
         }))
@@ -887,7 +887,7 @@ describe('gulp-remove-code', function () {
       const originalContents = readFixtureAsText('not-file-before.src')
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), originalContents)
           done()
         }))
@@ -901,7 +901,7 @@ describe('gulp-remove-code', function () {
       const stream = removeCode({development: false, commentStart: '/#', commentEnd: '#/'})
 
       stream.once('data', function (file) {
-        file.contents.pipe(es.wait(function (_, data) {
+        file.contents.pipe(concat(function (data) {
           assert.equal(data.toString(), readFixtureAsText('not-spaces-after.src'))
           done()
         }))
