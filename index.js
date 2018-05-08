@@ -1,6 +1,6 @@
 'use strict'
 
-const assign = require('object-assign')
+const entries = require('object.entries')
 const escapeStringRegexp = require('escape-string-regexp')
 const through = require('through2')
 const BufferStreams = require('bufferstreams')
@@ -82,6 +82,12 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
 // --------------------------------------------------------------------------------------------------
 
 module.exports = function (options) {
+  options = options || {}
+
+  if (!options.conditions) {
+    options.conditions = entries(options).filter(key => key !== 'commentStart' && key !== 'commentEnd')
+  }
+
   return through.obj(function (file, enc, callback) {
     const stream = this
 
@@ -149,16 +155,7 @@ function removeCode (file, buf, options) {
 }
 
 function prepareOptions (file, options) {
-  options = assign({}, options)
-
   if (!file.isNull()) {
-    options.conditions = Object.keys(options).reduce((conditions, key) => {
-      if (key !== 'commentStart' && key !== 'commentEnd') {
-        conditions.push([key, options[key]])
-      }
-      return conditions
-    }, [])
-
     if (!options.commentStart) {
       // Detect comment tokens
       const fileExt = getFileExt(file.path)
