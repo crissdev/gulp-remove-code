@@ -83,13 +83,11 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
 
 module.exports = function (options) {
   options = Object.assign({}, options)
+  options.conditions = []
 
-  if (!options.conditions) {
-    options.conditions = []
-    for (const condition of entries(options)) {
-      if (condition[0] !== 'commentStart' && condition[0] !== 'commentEnd') {
-        options.conditions.push(condition)
-      }
+  for (const condition of entries(options)) {
+    if (condition[0] !== 'commentStart' && condition[0] !== 'commentEnd') {
+      options.conditions.push(condition)
     }
   }
 
