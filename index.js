@@ -82,7 +82,7 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
 // --------------------------------------------------------------------------------------------------
 
 module.exports = function (options) {
-  options = options || {}
+  options = Object.assign({}, options)
 
   if (!options.conditions) {
     options.conditions = []
