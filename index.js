@@ -25,20 +25,15 @@ function applyReplacements (buffer, {commentTypes, conditions}) {
   let contents = buffer.toString()
 
   if (buffer.length > 0) {
-    for (let i = 0; i < conditions.length; i++) {
-      const key = conditions[i][0]
-      const value = conditions[i][1]
-
-      commentTypes.forEach(item => {
-        const commentStart = item[0]
-        const commentEnd = item[1]
+    for (const [key, value] of conditions) {
+      for (const [commentStart, commentEnd] of commentTypes) {
         const regex = getRemovalTagsRegExp(commentStart, commentEnd, key)
 
         contents = contents.replace(regex, function (ignore, original, capture) {
           const not = (capture === '!')
           return (value ^ not) ? '' : original
         })
-      })
+      }
     }
   }
 
@@ -85,7 +80,12 @@ module.exports = function (options) {
   options = options || {}
 
   if (!options.conditions) {
-    options.conditions = entries(options).filter(key => key !== 'commentStart' && key !== 'commentEnd')
+    options.conditions = []
+    for (const condition of entries(options)) {
+      if (condition[0] !== 'commentStart' && condition[0] !== 'commentEnd') {
+        options.conditions.push(condition)
+      }
+    }
   }
 
   return through.obj(function (file, enc, callback) {
