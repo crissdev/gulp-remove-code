@@ -8,7 +8,7 @@ const getFileExt = require('path').extname
 const PluginError = require('plugin-error')
 
 const PLUGIN_NAME = 'gulp-remove-code'
-const regexCache = new Map([])
+const regexCache = new Map()
 const extensions = new Map([
   ['.coffee', [['#', ''], ['###', '###']]],
   ['.css', [['/*', '*/']]],
@@ -48,30 +48,35 @@ function applyReplacements (buffer, {commentTypes, conditions}) {
  */
 function getRemovalTagsRegExp (commentStart, commentEnd, key) {
   const cacheKey = `${commentStart}${commentEnd}${key}`
-  const escapedKey = escapeStringRegexp(key)
-  let pattern
 
   if (regexCache.has(cacheKey)) {
-    pattern = regexCache.get(cacheKey)
-  } else {
-    pattern = [
-      '(',
-      escapeStringRegexp(commentStart),
-      '\\s*removeIf\\((!?)',
-      escapedKey,
-      '\\)\\s*',
-      escapeStringRegexp(commentEnd),
-      '\\s*' +
-      '(\\n|\\r|.)*?',
-      escapeStringRegexp(commentStart),
-      '\\s*endRemoveIf\\((!?)',
-      escapedKey,
-      '\\)\\s*',
-      escapeStringRegexp(commentEnd),
-      ')'
-    ].join('')
+    return regexCache.get(cacheKey)
   }
-  return new RegExp(pattern, 'gi')
+
+  const escapedCommentStart = escapeStringRegexp(commentStart)
+  const escapedKey = escapeStringRegexp(key)
+  const escapedCommentEnd = escapeStringRegexp(commentEnd)
+  const pattern = [
+    '(',
+    escapedCommentStart,
+    '\\s*removeIf\\((!?)',
+    escapedKey,
+    '\\)\\s*',
+    escapedCommentEnd,
+    '\\s*' +
+    '(\\n|\\r|.)*?',
+    escapedCommentStart,
+    '\\s*endRemoveIf\\((!?)',
+    escapedKey,
+    '\\)\\s*',
+    escapedCommentEnd,
+    ')'
+  ].join('')
+  const re = new RegExp(pattern, 'gi')
+
+  regexCache.set(cacheKey, re)
+
+  return re
 }
 
 // --------------------------------------------------------------------------------------------------

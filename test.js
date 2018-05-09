@@ -284,6 +284,19 @@ describe('gulp-remove-code', function () {
       stream.end()
     })
 
+    it('should not modify the options object', function (done) {
+      const options = {}
+      const stream = removeCode(options)
+
+      stream.once('data', function () {
+        assert.strictEqual(Object.keys(options).length, 0, 'Plugin must copy the received options')
+        done()
+      })
+
+      stream.write(htmlFile)
+      stream.end()
+    })
+
     /* not */
 
     it('should remove code from html file when not condition is true', function (done) {
@@ -718,6 +731,21 @@ describe('gulp-remove-code', function () {
       })
 
       stream.write(spacesFile)
+      stream.end()
+    })
+
+    it('should not modify the options object', function (done) {
+      const options = {}
+      const stream = removeCode(options)
+
+      stream.once('data', function (file) {
+        file.contents.pipe(concat(function (data) {
+          assert.strictEqual(Object.keys(options).length, 0, 'Plugin must copy the received options')
+          done()
+        }))
+      })
+
+      stream.write(htmlFile)
       stream.end()
     })
 
