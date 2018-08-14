@@ -4,7 +4,7 @@
   "description": "Remove sections of code from files based on conditions",
   "main": "index.js",
   "scripts": {
-    "test": "nsp check && npm run lint && mocha test.js",
+    "test": "npm run lint && mocha test.js",
     "lint": "eslint --max-warnings 0 index.js test.js",
     "lint-watch": "esw -w index.js test.js",
     "lint-fix": "eslint --fix index.js test.js"
@@ -45,16 +45,15 @@
   },
   "devDependencies": {
     "concat-stream": "^1.6.2",
-    "eslint": "^4.19.1",
+    "eslint": "^5.3.0",
     "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "eslint-watch": "^3.1.4",
-    "mocha": "^5.1.1",
-    "nsp": "^3.2.1",
-    "vinyl": "^2.1.0"
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "eslint-watch": "^4.0.2",
+    "mocha": "^5.2.0",
+    "vinyl": "^2.2.0"
   },
   "eslintConfig": {
     "extends": [
