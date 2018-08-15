@@ -103,13 +103,13 @@ module.exports = function (options) {
   })
 }
 
-function getFileContents (file, options, stream, callback) {
+function getFileContents (file, options, stream) {
   if (file.isNull()) {
     return file.contents
   }
 
   if (file.isBuffer()) {
-    return getBufferContents(file, options, stream, callback)
+    return getBufferContents(file, options, stream)
   }
 
   if (file.isStream()) {
@@ -132,14 +132,14 @@ function getStreamContents (file, options, stream) {
   const streamer = new BufferStreams(function (err, buf, callback) {
     if (err) {
       stream.emit('error', getError(err))
-      return callback(null, Buffer.from(''))
+      return callback()
     }
 
     const parsed = removeCode(file, buf, options)
 
     if (parsed instanceof PluginError) {
       stream.emit('error', parsed)
-      return callback(null, Buffer.from(''))
+      return callback()
     }
 
     callback(null, parsed)
