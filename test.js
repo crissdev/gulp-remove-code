@@ -148,7 +148,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should remove code from cshtml file when condition is true', function (done) {
-      const stream = removeCode({'no-message': true})
+      const stream = removeCode({'no-message': true, 'no-html': true})
 
       stream.once('data', function (file) {
         assert.strictEqual(file.contents.toString(), readFixtureAsText('file-after.cshtml'))
@@ -160,7 +160,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should not remove code from cshtml file when condition is false', function (done) {
-      const stream = removeCode({'no-message': false})
+      const stream = removeCode({'no-message': false, 'no-html': false})
       const originalContents = cshtmlFile.contents.toString()
 
       stream.once('data', function (file) {
@@ -325,7 +325,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should remove code from cshtml file when not condition is true', function (done) {
-      const stream = removeCode({'no-message': false})
+      const stream = removeCode({'no-message': false, 'no-html': false})
 
       stream.once('data', function (file) {
         assert.strictEqual(file.contents.toString(), readFixtureAsText('not-file-after.cshtml'))
@@ -337,7 +337,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should not remove code from cshtml file when not condition is false', function (done) {
-      const stream = removeCode({'no-message': true})
+      const stream = removeCode({'no-message': true, 'no-html': true})
       const originalContents = notCshtmlFile.contents.toString()
 
       stream.once('data', function (file) {
@@ -576,7 +576,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should remove code from cshtml file when condition is true', function (done) {
-      const stream = removeCode({'no-message': true})
+      const stream = removeCode({'no-message': true, 'no-html': true})
 
       stream.once('data', function (file) {
         file.contents.pipe(concat(function (data) {
@@ -781,7 +781,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should remove code from cshtml file when not condition is true', function (done) {
-      const stream = removeCode({'no-message': false})
+      const stream = removeCode({'no-message': false, 'no-html': false})
 
       stream.once('data', function (file) {
         file.contents.pipe(concat(function (data) {
@@ -795,7 +795,7 @@ describe('gulp-remove-code', function () {
     })
 
     it('should not remove code from cshtml file when not condition is false', function (done) {
-      const stream = removeCode({'no-message': true})
+      const stream = removeCode({'no-message': true, 'no-html': true})
       const originalContents = readFixtureAsText('not-file-before.cshtml')
 
       stream.once('data', function (file) {
