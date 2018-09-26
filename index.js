@@ -27,6 +27,7 @@ function applyReplacements (buffer, {commentTypes, conditions}) {
   if (buffer.length > 0) {
     for (const [key, value] of conditions) {
       for (const [commentStart, commentEnd] of commentTypes) {
+        // console.log(commentStart + commentEnd);
         const regex = getRemovalTagsRegExp(commentStart, commentEnd, key)
 
         contents = contents.replace(regex, function (ignore, original, capture) {
@@ -56,6 +57,7 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
   const escapedCommentStart = escapeStringRegexp(commentStart)
   const escapedKey = escapeStringRegexp(key)
   const escapedCommentEnd = escapeStringRegexp(commentEnd)
+
   const pattern = [
     '(',
     escapedCommentStart,
@@ -67,6 +69,15 @@ function getRemovalTagsRegExp (commentStart, commentEnd, key) {
     '(\\n|\\r|.)*?',
     escapedCommentStart,
     '\\s*endRemoveIf\\((!?)',
+    escapedKey,
+    '\\)\\s*',
+    escapedCommentEnd,
+    ')',
+    '|',
+    '(',
+    '.*',
+    escapedCommentStart,
+    '\\s*removeSingleIf\\((!?)',
     escapedKey,
     '\\)\\s*',
     escapedCommentEnd,
